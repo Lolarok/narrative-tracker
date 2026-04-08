@@ -1,0 +1,67 @@
+name: Narrative Tracking Analysis
+
+on:
+  schedule:
+    - cron: '0 10 * * *'  # Daily at 10:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force rescan even if recent'
+        required: false
+        default: 'false'
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run narrative tracking
+        run: |
+          mkdir -p output
+          python example.py --output output/
+
+      - name: Validate output
+        run: |
+          python -c "
+          import json, os
+          narratives_file = 'output/narratives.json'
+          heatmap_file = 'output/heatmap.json'
+          if not os.path.exists(narratives_file):
+              print('ERROR: narratives.json not generated')
+              exit(1)
+          if not os.path.exists(heatmap_file):
+              print('ERROR: heatmap.json not generated')
+              exit(1)
+          # Validate narratives
+          with open(narratives_file, 'r') as f:
+              narratives = json.load(f)
+          print(f'OK: Generated narrative analysis with {len(narratives.get(\"narratives\", []))} narratives')
+          # Validate heatmap
+          with open(heatmap_file, 'r') as f:
+              heatmap = json.load(f)
+          print(f'OK: Generated heatmap with {len(heatmap)} entries')
+          "
+
+      - name: Commit and push results
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add output/
+            git commit -m "Update narrative tracking results: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" || echo "No changes to commit"
+            git push
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
