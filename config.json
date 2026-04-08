@@ -1,0 +1,52 @@
+{
+  "scraping": {
+    "sources": {
+      "twitter": {
+        "enabled": true,
+        "max_posts": 100,
+        "lookback_hours": 72
+      },
+      "reddit": {
+        "enabled": true,
+        "subreddits": ["cryptocurrency", "altcoin", "bitcoin", "ethfinance"],
+        "max_posts": 50,
+        "lookback_hours": 48
+      },
+      "rss": {
+        "enabled": true,
+        "feeds": [
+          "https://cointelegraph.com/rss",
+          "https://bitcoinmagazine.com/rss",
+          "https://www.coindesk.com/arc/outboundfeeds/rss.xml"
+        ],
+        "max_items": 50,
+        "lookback_hours": 24
+      }
+    }
+  },
+  "narratives": {
+    "categories": ["AI", "DeFi", "Gaming", "Metaverse", "RWA", "L1", "L2", "Meme", "Infrastructure"],
+    "keywords": {
+      "AI": ["AI", "artificial intelligence", "machine learning", "neural", "deep learning", " LLM", "generative", "agent"],
+      "DeFi": ["DeFi", "decentralized finance", "yield", "liquidity", "staking", "lending", "borrowing"],
+      "Gaming": ["gaming", "playtoearn", "P2E", "NFT", "virtual", "metaverse", "blockchain game"],
+      "RWA": ["RWA", "real world asset", "tokenization", "real estate", "commodities", "bonds"],
+      "L1": ["L1", "layer 1", "blockchain", "Ethereum", "Solana", "Cardano", "Avalanche"],
+      "L2": ["L2", "layer 2", "scaling", "Arbitrum", "Optimism", "Polygon", "StarkNet"],
+      "Meme": ["meme", "dog", "Shiba", "Pepe", "cat", "token", "meme coin"],
+      "Infrastructure": ["infrastructure", "oracle", "crosschain", "bridge", "privacy", "storage"]
+    }
+  },
+  "analysis": {
+    "sentiment_thresholds": {
+      "positive": 0.2,
+      "negative": -0.2
+    },
+    "momentum_window": 24,
+    "min_posts_for_validity": 10
+  },
+  "output": {
+    "min_momentum": 0.3,
+    "max_narratives": 20
+  }
+}
